@@ -5,6 +5,7 @@ Created on Wed Nov 14 22:54:32 2018
 @author: Jacob
 """
 import json
+import sys
 import numpy as np
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk import pos_tag
@@ -95,6 +96,7 @@ if __name__ == "__main__":
     #                 case = {"statement": statement,
     #                         "question": "Non"}
     #             f_w.write(json.dumps(case) + "\n")
-    input_file = "./data/statements_v0.0.json"
-    output_file = "./data/statements_v0.0.question.json"
+
+    input_file = sys.argv[1]
+    output_file = sys.argv[2]
     s2q(input_file, output_file)

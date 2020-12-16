@@ -2,6 +2,7 @@ import csv
 import json
 from tqdm import tqdm
 from stanfordcorenlp import StanfordCoreNLP
+import logging
 import sys
 sys.path.append('./question-to-statement')
 from POSTree import POSTree
@@ -24,7 +25,7 @@ def convert(file_in, file_out, nlp):
             try:
                 statement = tree.adjust_order().replace(' **blank** ', ' ')
                 # print("question: {}\nstatement:{}\n".format(question, statement))
-                # import pdb; pdb.set_trace()
+                import pdb; pdb.set_trace()
                 qa['statement'] = statement
                 # import pdb; pdb.set_trace()
                 if qa['answer']:
@@ -41,10 +42,10 @@ def convert(file_in, file_out, nlp):
 
 
 if __name__ == "__main__":
-    file_in = "./data/BoolQ/dev.jsonl"
-    file_out = "./data/BoolQ/dev.statement.csv"
-    # nlp = StanfordCoreNLP(r'/home/rthuang/script/stanford-corenlp-full-2018-10-05')
-    nlp = StanfordCoreNLP(r'/home/rthuang/script/stanford-corenlp-4.2.0')
+    file_in = sys.argv[1]
+    file_out = sys.argv[2]
+    stanford_path = sys.argv[3]
+    nlp = StanfordCoreNLP(stanford_path, logging_level=logging.DEBUG)
     try:
         convert(file_in, file_out, nlp)
     finally:
