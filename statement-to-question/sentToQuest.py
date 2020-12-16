@@ -8,7 +8,7 @@ import numpy as np
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk import pos_tag
 
-sentence = raw_input("Enter an English sentence to be transformed into a question: \n") #'There will be a book here.'
+sentence = input("Enter an English sentence to be transformed into a question: \n") #'There will be a book here.'
 sentence = sentence.lower()
 sentence = sentence.replace('.','')
 question_keywords = ['is', 'will', 'are', 'was', 'were', 'am']
@@ -52,4 +52,4 @@ question = (' ').join(word_decomp) # Create a string to reform the question inst
 if '?' not in question: # Ensures that ? is attached to end of the sentence
     question = question + '?' 
     
-print question #Return the final formed question version of the input sentence
+print(question) #Return the final formed question version of the input sentence
