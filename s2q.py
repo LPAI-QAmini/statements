@@ -7,9 +7,11 @@ Created on Wed Nov 14 22:54:32 2018
 import json
 import sys
 import numpy as np
+import nltk
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk import pos_tag
-
 
 def statement2question(statement):
     statement = statement.lower()
@@ -61,18 +63,25 @@ def statement2question(statement):
 def s2q(input_file, output_file):
     with open(input_file) as f_in, open(output_file, "w") as f_w:
         count = 0
+        positive = 0
+        convert_failed = 0
         for line in f_in:
+            count += 1
             sample = json.loads(line.strip())
             statement = sample["sentence1"]
+            # question = statement2question(statement=statement)
             try:
                 question = statement2question(statement=statement)
-            except:
+            except IndexError:
+                # print("IndexError: string index out of range")
                 question = statement
+                convert_failed += 1
             if sample["label"] == 1:
-                count += 1
+                positive += 1
             sample["sentence1"] = question
             f_w.write(json.dumps(sample) + "\n")
-        print(count)
+        print("Total: {}; Positive: {}, Negative: {}.".format(count, positive, count-positive))
+        print("Convert Failed: {}.".format(convert_failed))
 
 
 if __name__ == "__main__":

@@ -93,6 +93,9 @@ class DataTrainingArguments:
     validation_file: Optional[str] = field(
         default=None, metadata={"help": "A csv or a json file containing the validation data."}
     )
+    write_predictions: bool = field(
+        default=False, metadata={"help": "Write the predictions of validation_file or not.."}
+    )
 
     def __post_init__(self):
         if self.task_name is not None:
@@ -379,6 +382,24 @@ def main():
                         writer.write(f"{key} = {value}\n")
 
             eval_results.update(eval_result)
+
+            # Output prediction
+            if data_args.write_predictions:
+                # eval_dataset.remove_columns_("label")
+                predictions = trainer.predict(test_dataset=eval_dataset).predictions
+                predictions = np.squeeze(predictions) if is_regression else np.argmax(predictions, axis=1)
+
+                output_eval_file_1 = os.path.join(training_args.output_dir, f"eval_outputs_{task}.txt")
+                if trainer.is_world_process_zero():
+                    with open(output_eval_file_1, "w") as writer:
+                        logger.info(f"***** Eval results {task} *****")
+                        writer.write("index\tprediction\n")
+                        for index, item in enumerate(predictions):
+                            if is_regression:
+                                writer.write(f"{index}\t{item:3.3f}\n")
+                            else:
+                                item = label_list[item]
+                                writer.write(f"{index}\t{item}\n")
 
     if training_args.do_predict:
         logger.info("*** Test ***")
