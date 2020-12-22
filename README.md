@@ -10,6 +10,8 @@
 - question-to-statement
 
   - `./question-to-statement`
+  - **参考**：
+    - https://github.com/SunnyWay/question_to_statement
   - 启动脚本：
     - `python q2s.py path_to_input_file path_to_output_file path_to_stanfordCoreNLP`
       - `input_file`: 
@@ -20,12 +22,14 @@
 - statement-to-question
 
   - `./statement-to-question`
+  - **参考**：
+    - https://github.com/JacobHA/Sentence-to-Question
   - 启动脚本：
     - `python s2q.py path_to_input_file path_to_output_file`
     - `input_file`:
       - `transformers` format data.
-  - 环境依赖：
-    - `nltk`
+    - 环境依赖：
+      - `nltk`
 
 - Classification Script
 
@@ -89,4 +93,3 @@
 
     - `datasets`
     - `tranformers`
-
