@@ -380,16 +380,19 @@ def main():
                     for key, value in eval_result.items():
                         logger.info(f"  {key} = {value}")
                         writer.write(f"{key} = {value}\n")
+                    print("")
 
             eval_results.update(eval_result)
 
             # Output prediction
             if data_args.write_predictions:
                 # eval_dataset.remove_columns_("label")
+                output_eval_file_1 = os.path.join(training_args.output_dir, f"eval_outputs_{task}.txt")
+                logger.info("Writing predictions to {}.".format(output_eval_file_1))
+
                 predictions = trainer.predict(test_dataset=eval_dataset).predictions
                 predictions = np.squeeze(predictions) if is_regression else np.argmax(predictions, axis=1)
 
-                output_eval_file_1 = os.path.join(training_args.output_dir, f"eval_outputs_{task}.txt")
                 if trainer.is_world_process_zero():
                     with open(output_eval_file_1, "w") as writer:
                         logger.info(f"***** Eval results {task} *****")
@@ -400,6 +403,19 @@ def main():
                             else:
                                 item = label_list[item]
                                 writer.write(f"{index}\t{item}\n")
+                # Compute P/R/F1 scores
+                import json
+                from sklearn.metrics import precision_recall_fscore_support
+                all_labels = []
+                with open(data_args.validation_file) as f_label:
+                    for line in f_label:
+                        item = json.loads(line.strip())
+                        label = item["label"]
+                        all_labels.append(label)
+                # import pdb; pdb.set_trace()
+                n_results = precision_recall_fscore_support(all_labels, predictions, average=None, labels=[0,1])
+                print("")
+                logger.info("P/R/F1 Scores: {}".format(n_results))
 
     if training_args.do_predict:
         logger.info("*** Test ***")
